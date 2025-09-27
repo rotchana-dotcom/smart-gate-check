@@ -1,15 +1,11 @@
-// /api/env-dump.js
+// /api/check-member.js (CommonJS)
 module.exports = async (req, res) => {
-  const safe = {};
-  Object.keys(process.env).forEach(key => {
-    if (key === 'BREVO_API_KEY') {
-      safe[key] = process.env[key] ? "✅ PRESENT" : "❌ MISSING";
-    } else {
-      safe[key] = process.env[key] ? "..." : "undefined";
-    }
-  });
-
+  const { BREVO_API_KEY, MEMBERS_LIST_ID, VERCEL_URL, VERCEL_ENV } = process.env;
+  const hasKey = Boolean(BREVO_API_KEY);
   return res.status(200).json({
-    dump: safe
+    method: req.method,
+    has_BREVO_API_KEY: hasKey,
+    MEMBERS_LIST_ID,
+    vercel: { url: VERCEL_URL || null, env: VERCEL_ENV || null }
   });
 };
