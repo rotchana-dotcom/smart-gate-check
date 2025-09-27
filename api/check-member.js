@@ -1,6 +1,39 @@
 // /api/check-member.js  (CommonJS on Vercel)
 module.exports = async (req, res) => {
   // --- CORS / Preflight ---
+  // /api/check-member.js
+
+// /api/check-member.js  (safe debug — no hardcoded secrets)
+module.exports = async (req, res) => {
+  // CORS / preflight
+  const origin = req.headers.origin || "*";
+  res.setHeader("Access-Control-Allow-Origin", origin);
+  res.setHeader("Vary", "Origin");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  if (req.method === "OPTIONS") return res.status(204).end();
+
+  // Only report what the runtime sees — no values exposed
+  const hasBrevo = Boolean(process.env.BREVO_API_KEY);
+  const hasList  = Boolean(process.env.MEMBERS_LIST_ID);
+
+  return res.status(200).json({
+    method: req.method,
+    brevoKeyPresent: hasBrevo,
+    brevoKeyLength: process.env.BREVO_API_KEY ? process.env.BREVO_API_KEY.length : 0,
+    membersListIdPresent: hasList,
+    nodeVersion: process.version,
+    vercelEnv: process.env.VERCEL_ENV || "undefined"
+  });
+};
+
+  if (!BREVO_API_KEY) {
+    return res.status(500).json({ error: "Missing BREVO_API_KEY env (even fallback empty)" });
+  }
+
+  // ... rest of your code that calls Brevo API ...
+};
+ 
   const origin = req.headers.origin || "*";
   res.setHeader("Access-Control-Allow-Origin", origin);
   res.setHeader("Vary", "Origin");
